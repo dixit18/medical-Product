@@ -8,5 +8,5 @@ router.route('/')
             .post(validate,productTypesController.createProductType)
 
 
-
+router.route('/:id').delete(validate,productTypesController.deleteProductType)
     module.exports = router

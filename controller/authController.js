@@ -27,7 +27,10 @@ const signUp = async(req,res)=>{
 
         const newUser = await User.create(req.body)
         
-        // await sendEmail(newUser.email,newUser.name,newUser.password);
+       await sendEmail({email: newUser.email,
+                password: newUser.password,
+                username:  newUser.name
+                        });
 
         createSendToken(newUser, 201, res)
 
@@ -52,7 +55,7 @@ const login = async(req,res,next)=>{
         const user = await User.findOne({email}).select('+password')
         console.log(user)
        if (!user || !(await user.correctPassword(password, user.password))) {
-         return next(new Error('Incorrect email or password', 401));
+         return next(new Apperror('Incorrect email or password', 401));
  }
 
  createSendToken(user, 200, res);

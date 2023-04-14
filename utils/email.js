@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = async (to, username, password) => {
+const sendEmail = async options => {
   // 1) Create a transporter
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -14,13 +14,13 @@ const sendEmail = async (to, username, password) => {
   // 2) Define the email options
   const mailOptions = {
     from: 'Parmar Dixit <dixitparmar@gmail.com>',
-    to: to,
+    to: options.email,
     subject: 'Registration Successful', // email subject
     html: `
       <h1>Welcome to MyApp</h1>
       <p>Thank you for registering with MyApp. Here are your login credentials:</p>
-      <p>Username: ${username}</p>
-      <p>Password: ${password}</p>
+      <p>Username: ${options.username}</p>
+      <p>Password: ${options.password}</p>
       <p>Please keep this information secure and do not share it with anyone.</p>
       <p>Thank you for using MyApp!</p>
     ` 
@@ -28,7 +28,7 @@ const sendEmail = async (to, username, password) => {
   };
 
   // 3) Actually send the email
-  await transporter.sendMail(to, username, password);
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = sendEmail;

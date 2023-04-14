@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
     select: false
   },
+ 
 })
 
 userSchema.pre('save',async function(next){
