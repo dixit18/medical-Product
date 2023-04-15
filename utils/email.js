@@ -19,8 +19,8 @@ const sendEmail = async options => {
     html: `
       <h1>Welcome to MyApp</h1>
       <p>Thank you for registering with MyApp. Here are your login credentials:</p>
-      <p>Username: ${options.username}</p>
-      <p>Password: ${options.password}</p>
+      <p>name: ${options.username}</p>
+     
       <p>Please keep this information secure and do not share it with anyone.</p>
       <p>Thank you for using MyApp!</p>
     ` 

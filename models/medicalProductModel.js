@@ -26,11 +26,18 @@ const medicalProductSchema = new mongoose.Schema({
       ref:'User',
       required: true
   },
- 
-  
+  isdeleted:{
+    type:Boolean,
+    default:false
+  }
   },{
     timestamps:true
   });
+
+  medicalProductSchema.pre('find', function(next) {
+  this.where({ isdeleted: false });
+  next();
+});
   
   // Create and export the MedicalProduct model
   module.exports = new mongoose.model('MedicalProduct', medicalProductSchema);

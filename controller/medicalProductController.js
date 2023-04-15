@@ -4,6 +4,18 @@ const { Error } = require('mongoose');
 const myError = require('../utils/Apperror');
 const User = require('../models/userModel')
 const Apperror = require('../utils/Apperror');
+const medicalProductModel = require('../models/medicalProductModel');
+const ObjectId = require('mongoose').Types.ObjectId;
+
+// Validator function
+function isValidObjectId(id) {
+    if (ObjectId.isValid(id)) {
+        const objectId = new ObjectId(id);
+        return objectId.equals(id);
+    }
+    return false;
+}
+
 
 const createProduct = async (req,res, next)=>{
     const {name, productType, expiryDate} = req.body
@@ -15,7 +27,9 @@ const createProduct = async (req,res, next)=>{
             // console.log("Product")
             return next(new Apperror("Product type does not exist",400))
         }
-
+        
+const alreadyExists = await MedicalProduct.findOne({name:name})
+if(alreadyExists) return next(new Apperror("Product already exists"))
         const newProduct =  new MedicalProduct({
             name, 
             productType: proType._id,
@@ -23,7 +37,11 @@ const createProduct = async (req,res, next)=>{
             expiryDate,
             user:req.user.id
         })
-        console.log(newProduct)
+        // console.log(newProduct)
+        
+      
+
+
         const product = await newProduct.save()
 
         res.status(201).json({
@@ -43,7 +61,7 @@ const createProduct = async (req,res, next)=>{
 
 const getAllProduct = async(req,res)=>{
     try{
-        const products = await MedicalProduct.find({})
+        const products = await MedicalProduct.find()
         res.status(200).json({
             status:'success',
             data:{
@@ -64,7 +82,17 @@ const deleteProductById = async(req,res,next)=>{
     if(!id) return next(new Apperror('id is not present in the parameter',400))
 try{
 
-    const productExist = await MedicalProduct.findById(id)
+
+    let productExist;
+    if(isValidObjectId(id)){
+
+        productExist = await MedicalProduct.findById(id);
+    }else{
+     return next(new Apperror("please provide a valid product id"))
+    }
+
+
+    // const productExist = await MedicalProduct.findById(id)
 
     if(!productExist) return next(new Apperror('Product does not exist',400))
 
@@ -72,15 +100,25 @@ try{
     if(productExist.user.toString() !== req.user.id){
         return next(new Apperror(`user does not have permission to delete product`,401))
     }
-    const deleteOne = await MedicalProduct.deleteOne(productExist);
-   
-    if(deleteOne){
-        return res.status(200).json({
-            message:'Product does not exist anymore'
-        })
-    }else{
-        return next(new Apperror('something went wrong while deleting product',500))
-    }
+
+    // const deleteOne = await MedicalProduct.deleteOne(productExist);
+    productExist.isdeleted = true;
+    const temp = await productExist.save()
+    console.log(temp)
+//    const data = await MedicalProduct.find({isdeleted:false})
+
+//    console.log(data)
+   res.status(200).json({
+    status:'success',
+msg:"successfully deleted"
+   })
+    // if(deleteOne){
+    //     return res.status(200).json({
+    //         message:'Product does not exist anymore'
+    //     })
+    // }else{
+    //     return next(new Apperror('something went wrong while deleting product',500))
+    // }
     
 }catch(err){
     res.status(500).json({
@@ -94,6 +132,7 @@ try{
 const updateProduct = async(req,res,next)=>{
 
     const id = req.params.id;
+
     let ProductTypeID;
     const file = req.files;
 
@@ -102,10 +141,18 @@ const {name,productType,expiryDate} = req.body;
 if(!id) return next(new Apperror('id is not present in the parameter',400))
 try{
 
-    const productExist = await MedicalProduct.findById(id)
-    // console.log("product exists",productExist)
+    let productExist;
+        if(isValidObjectId(id)){
+ 
+            productExist = await MedicalProduct.findById(id);
+        }else{
+         return next(new Apperror("please provide a valid product id"))
+        }
+
     if(!productExist) return next(new Apperror('Product does not exist',400))
-    // console.log("first condition",productExist.user.toString() !== req.user.id)
+    
+    console.log(req.user.id)
+
     if(productExist.user.toString() !== req.user.id){
 
         return next(new Apperror('you do not have permission to update this product',401))

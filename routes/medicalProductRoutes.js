@@ -30,6 +30,9 @@ router.route('/like/:id').post(validateToken,likeDislikeController.like)
 
 router.route('/disLike/:id').post(validateToken,likeDislikeController.disLike)
 
+router.route('/mostLikedProduct').get(likeDislikeController.mostLikedPRoduct)
+
+router.route('/mostDislikeProduct').get(likeDislikeController.mostDislikedProduct)
 
 module.exports = router;
 

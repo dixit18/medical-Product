@@ -31,15 +31,16 @@ const uploadPhoto = (req, res, next) => {
   const upload = multer({
     storage: multerStorage,
     fileFilter: multerFilter,
-  }).fields([
+  }).  fields([
     { name: "name", maxCount: 10 },
     { name: "productName", maxCount: 10 },
-    { name: "recommendedDose", maxCount: 10 },
-    { name: "price", maxCount: 10 },
     { name: "expiryDate", maxCount: 10 },
     { name: "image", maxCount: 10 },
   ]);
+  
 
+
+  // 
   // .single("image");
 
   upload(req, res, (err) => {
