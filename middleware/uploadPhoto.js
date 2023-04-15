@@ -15,7 +15,7 @@ const uploadPhoto = (req, res, next) => {
     filename: (req, file, cb) => {
         // console.log(req.files)
       const ext = file.mimetype.split("/")[1];
-      cb(null, `meds-${req.body.name}-${Date.now()}.${ext}`);
+      cb(null, `medicine-${req.body.name}-${Date.now()}.${ext}`);
     },
   });
 
